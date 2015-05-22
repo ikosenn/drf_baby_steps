@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
+from rest_framework import reverse
+from rest_framework import renderers
 
 from .permissions import IsOwnwerOrReadOnly
 from .models import Snippet
@@ -130,11 +132,34 @@ class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+@api_view
+def api_root(request, format = None):
+    return Response({
+        'users':reverse('user-list', request=request, format=format),
+        'snippets': reverse('snippet-list', request=request, format=format)
+        })
+
+class SnippetHighlight(generics.GenericAPIView):
+    queryset = Snippet.objects.all()
+    renderer_classes = (renderers.StaticHTMLRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        snippet = self.get_object()
+        return Response(snippet.highlighted)
 
 
 
-
-
+{
+    "font_size": 13,
+    "ignored_packages":
+    [
+        "Vintage"
+    ],
+    "tab_size": 4,
+    "translate_tabs_to_spaces": true,
+    "trim_automatic_white_space": true,
+    "trim_trailing_white_space_on_save": true
+}
 
 
 
