@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import permissions
 
 from .models import Snippet
 from .serializers import SnippetSerializer, UserSerializer
@@ -64,6 +65,10 @@ class SnippetList(generics.ListCreateAPIView):
     '''List all api views or create a new snippet'''
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def perform_create(self, serializer):
+        serializer.save(owner = self.request.user)
 
     # def get(self, request, *args, **kwargs):
     #     # snippets = Snippet.objects.all()
@@ -86,6 +91,7 @@ class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
     '''
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     # # def get_object(self, pk):
     # #     try:
